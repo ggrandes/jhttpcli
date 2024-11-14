@@ -1,0 +1,318 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.javastack</groupId>
+	<artifactId>CHANGEIT</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+	<description>CHANGEIT</description>
+	<url>https://github.com/ggrandes/CHANGEIT</url>
+
+	<name>${project.groupId}:${project.artifactId}</name>
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<id>ggrandes</id>
+			<name>Guillermo Grandes</name>
+			<email>guillermo.grandes@gmail.com</email>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:git:https://github.com/ggrandes/${project.artifactId}.git</connection>
+		<developerConnection>scm:git:https://github.com/ggrandes/${project.artifactId}.git</developerConnection>
+		<url>https://github.com/ggrandes/${project.artifactId}.git</url>
+	</scm>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<start-class>org.javastack.CHANGEIT</start-class>
+		<java.version>1.8</java.version>
+		<slf4j.version>1.7.36</slf4j.version>
+		<reload4j.version>1.2.25</reload4j.version>
+		<servlet.version>3.1.0</servlet.version>
+	</properties>
+
+	<dependencies>
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<!-- Simple Logging -->
+		<!--
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		-->
+		<!-- Log4j 1.2 replacement -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-reload4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.reload4j</groupId>
+			<artifactId>reload4j</artifactId>
+			<version>${reload4j.version}</version>
+		</dependency>
+		<!-- Servlets -->
+		<!--
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		-->
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Do the magic -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.10.1</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<!-- Package WAR to upload to repo -->
+			<!--
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.3.2</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Built-By>maven</Built-By>
+						</manifestEntries>
+					</archive>
+					<warName>${project.artifactId}-${project.version}</warName>
+					<archiveClasses>true</archiveClasses>
+					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+				</configuration>
+			</plugin>
+			-->
+			<!-- Package Classes to JAR to upload to repo -->
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.2</version>
+				<configuration>
+					<finalName>${project.artifactId}-${project.version}</finalName>
+					<forceCreation>true</forceCreation>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addClasspath>true</addClasspath>
+							<mainClass>${start-class}</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Built-By>maven</Built-By>
+							<Implementation-Vendor>${project.groupId}</Implementation-Vendor>
+							<Implementation-Title>${project.groupId}:${project.artifactId}</Implementation-Title>
+							<Implementation-Version>${project.version}</Implementation-Version>
+						</manifestEntries>
+					</archive>
+					<excludes>
+						<exclude>**/pom.properties</exclude>
+						<exclude>**/log4j.properties</exclude>
+						<exclude>**/simplelogger.properties</exclude>
+						<exclude>**/example/*</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<!-- Package source to JAR to upload to repo -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<archive>
+								<manifestEntries>
+									<Built-By>maven</Built-By>
+								</manifestEntries>
+							</archive>
+							<excludeResources>true</excludeResources>
+							<excludes>
+								<exclude>**/example/*</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Package JavaDocs to JAR to upload to repo -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.3.2</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<source>${java.version}</source>
+					<excludePackageNames>*.example</excludePackageNames>
+				</configuration>
+			</plugin>
+			<!-- Jars in Jar -->
+			<!-- https://docs.spring.io/spring-boot/maven-plugin/packaging.html -->
+			<!-- https://docs.spring.io/spring-boot/specification/executable-jar/launching.html -->
+			<!-- https://docs.spring.io/spring-boot/specification/executable-jar/property-launcher.html -->
+			<!--
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.6.4</version>
+				<executions>
+					<execution>
+						<id>repackage</id>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>${start-class}</mainClass>
+				</configuration>
+			</plugin>			
+			-->
+			<!-- Package ZIP to upload to repo -->
+			<!--
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.3.0</version>
+				<configuration>
+					<descriptors>assembly/package.xml</descriptors>
+					<finalName>${project.artifactId}-${project.version}</finalName>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			-->
+			<!-- GPG Signed Components for Maven Central -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Maven Central Deployment -->
+			<!--
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.13</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>ossrh</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+			-->
+		</plugins>
+		<!-- Deployment Maven-S3 -->
+		<!--
+		<extensions>
+			<extension>
+				<groupId>org.springframework.build</groupId>
+				<artifactId>aws-maven</artifactId>
+				<version>5.0.0.RELEASE</version>
+			</extension>
+		</extensions>
+		-->
+	</build>
+
+	<!-- Maven Central Deployment -->
+	<!--
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository>
+	</distributionManagement>
+	-->
+	<!-- Deployment Maven-Github -->
+	<!--
+	<distributionManagement>
+	   <repository>
+	     <id>github</id>
+	     <name>GitHub Apache Maven Packages</name>
+	     <url>https://maven.pkg.github.com/ggrandes/CHANGEIT</url>
+	   </repository>
+	</distributionManagement>	
+	-->
+	<!-- Deployment Maven-S3 -->
+	<!--
+	<distributionManagement>
+		<repository>
+			<name>S3 Release Repository</name>
+			<id>maven-s3</id>
+			<url>s3://maven-release/release</url>
+		</repository>
+		<snapshotRepository>
+			<name>S3 Snapshot Repository</name>
+			<id>maven-s3</id>
+			<url>s3://maven-snapshot/snapshot</url>
+		</snapshotRepository>
+	</distributionManagement>
+	-->
+</project>
